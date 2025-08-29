@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { Dispatch, SetStateAction } from "react"; // Use type-only import
 import MatchupsLogo from "../assets/MatchupsLogo.svg";
 
 const NAV_LINKS = [
@@ -14,7 +15,13 @@ const NAV_LINKS = [
   { title: "API", link: "/test" },
 ];
 
-export const Navbar = ({ showApi, setShowApi }) => {
+// Define the props interface
+interface NavbarProps {
+  showApi: boolean;
+  setShowApi: Dispatch<SetStateAction<boolean>>;
+}
+
+export const Navbar = ({ showApi, setShowApi }: NavbarProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -47,7 +54,7 @@ export const Navbar = ({ showApi, setShowApi }) => {
         <div className="absolute right-0 top-[65px] w-64 bg-gray-dark text-white shadow-lg p-4 flex flex-col space-y-4">
           <ul className="flex flex-col items-end space-y-2">
             {NAV_LINKS.map((link) =>
-              link.title === "API Viewer" ? (
+              link.title === "API" ? (
                 <li key={link.title}>
                   <button
                     onClick={() => {
