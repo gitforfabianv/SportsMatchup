@@ -16,9 +16,13 @@ function App() {
       const data = await res.json();
       console.log("Fetched teams:", data);
       setTeams(data);
-    } catch (err) {
-      console.error("Failed to fetch teams:", err.message);
-    }
+    } catch (err: unknown) {
+  if (err instanceof Error) {
+    console.log(err.message); // Safe to access Error properties
+  } else {
+    console.log("Unknown error:", err);
+  }
+}
   };
 
   const retryFetch = async (retries = 3, delay = 1000) => {

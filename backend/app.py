@@ -82,7 +82,8 @@ template = """
     <div class="links">
         <a href="/api/test">TEST</a>
         <a href="/api/teams">TEAMS</a>
-        <a href="/api/matchups?team1=Miami%20Heat&team2=Minnesota%20Timberwolves">MATCHUPS</a>
+        <a href="/api/test">TEST</a>
+        <a href="/api/matchups?team1=MIA&team2=MIN">Mia vs Min</a>
     </div>
 </body>
 </html>
@@ -176,15 +177,15 @@ def get_nba_teams():
         {"id": "WAS", "name": "Washington Wizards", "image": "https://upload.wikimedia.org/wikipedia/en/0/02/Washington_Wizards_logo.svg"},
     ]
     return jsonify(teams)
-  
+
 @app.route("/api/matchups", methods=["GET"])
 def get_matchups():
     """
     API Endpoint to retrieve all-time head-to-head matchup data between two NBA teams.
     Expects 'team1' and 'team2' as query parameters (e.g., /api/matchups?team1=Miami%20Heat&team2=Minnesota%20Timberwolves).
     """
-    team1 = request.args.get('team1')  # Fixed: Changed requests.args.get to request.args.get
-    team2 = request.args.get('team2')  # Fixed: Changed requests.args.get to request.args.get
+    team1 = request.args.get('team1')
+    team2 = request.args.get('team2')
 
     if not team1 or not team2:
         return jsonify({"error": "Both team1 and team2 query parameters are required"}), 400
