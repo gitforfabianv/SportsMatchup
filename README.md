@@ -19,16 +19,18 @@ IG: @theNBAmatchups
 X: @theNBAmatchups
 
 ---
-# Resources 
-Check the docs folder for a list of how-to's and developmment resources. 
 
+# Resources
 
-# Test API Endpoints 
-* [http://127.0.0.1:5000/api/test](http://127.0.0.1:5000/api/test)
+Check the docs folder for a list of how-to's and developmment resources.
 
- 
-* [http://127.0.0.1:5000/api/test](http://127.0.0.1:5000/api/teams)
+# Test API Endpoints
+
+- [http://127.0.0.1:5000/api/test](http://127.0.0.1:5000/api/test)
+
+- [http://127.0.0.1:5000/api/test](http://127.0.0.1:5000/api/teams)
 
 # CONTRIBUTORS
-* [Fabian V](website)
-* [Tedley M](https://ted.meralus.com)
+
+- [Fabian V](website)
+- [Tedley M](https://ted.meralus.com)
