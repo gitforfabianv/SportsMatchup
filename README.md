@@ -1,6 +1,6 @@
 # NBA Matchups App
 
-- Compare any two NBA teams and get detailed head-to-head statistics, including win-loss records, season game logs, average points, and key performance metrics. Perfect for fans, analysts, and bettors looking for in-depth team matchup insights—similar to tools like Land of Basketball’s head-to-head game logs.
+Compare any two NBA teams and get detailed head-to-head statistics, including win-loss records, season game logs, average points, and key performance metrics. Perfect for fans, analysts, and bettors looking for in-depth team matchup insights—similar to tools like Land of Basketball’s head-to-head game logs.
 
 ## Tech Stack
 
