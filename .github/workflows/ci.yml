@@ -1,19 +1,25 @@
-name: Deploy to GitHub Pages
+name: Build and Deploy to GitHub Pages
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout source code
         uses: actions/checkout@v4
 
       - name: Set up Node.js
@@ -21,21 +27,29 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install Dependencies
-        run: cd frontend && npm install
-
-      - name: Build
-        run: cd frontend && npm run build
-
-      # Optional: Move dist to docs folder for GitHub Pages
-      - name: Prepare Docs Folder
+      - name: Install dependencies and build
         run: |
-          mkdir -p docs
-          cp -r frontend/dist/* docs/
+          cd frontend
+          rm -rf node_modules package-lock.json
+          npm install
+          npm run build
+          ls -la dist/  # Debug: Verify build directory contents
 
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v4
-        if: github.event_name == 'push'
+      - name: Upload build output
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs  # Deploy the docs folder
+          path: frontend/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
