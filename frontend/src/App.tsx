@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import { Navbar } from "./components/navbar";
-import Versus from "./components/versus";
-import { Footer } from "./components/footer";
+import { Navbar } from "./components/navbar.jsx";
+import Versus from "./components/versus.jsx";
+import { Footer } from "./components/footer.jsx";
 
 function App() {
   const [showApi, setShowApi] = useState(false);

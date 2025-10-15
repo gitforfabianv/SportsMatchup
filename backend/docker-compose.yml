@@ -1,0 +1,11 @@
+services: 
+  matchups:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: matchups
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=development
+    ports:
+      - "5000:5000"

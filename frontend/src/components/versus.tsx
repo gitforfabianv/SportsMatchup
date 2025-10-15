@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TeamSelect } from "./team-select";
 import { TeamMatchup } from "./TeamMatchup";
 import { RevealBlock } from "./RevealBlock";
@@ -10,11 +10,11 @@ interface Team {
 }
 
 interface VersusProps {
-  teams: Team[];
+  teams?: Team[]; // Make propTeams optional
 }
 
-// Define the teams array
-const teams: Team[] = [
+// Define the local fallback teams array
+const localTeams: Team[] = [
   { id: "ATL", name: "Atlanta Hawks", image: "https://upload.wikimedia.org/wikipedia/en/2/24/Atlanta_Hawks_logo.svg" },
   { id: "BOS", name: "Boston Celtics", image: "https://upload.wikimedia.org/wikipedia/en/8/8f/Boston_Celtics.svg" },
   { id: "BKN", name: "Brooklyn Nets", image: "https://upload.wikimedia.org/wikipedia/en/4/40/Brooklyn_Nets_primary_icon_logo_2024.svg" },
@@ -47,13 +47,67 @@ const teams: Team[] = [
   { id: "WAS", name: "Washington Wizards", image: "https://upload.wikimedia.org/wikipedia/en/0/02/Washington_Wizards_logo.svg" },
 ];
 
-export const Versus = ({ teams: propTeams }: VersusProps) => {
+export const Versus = ({ teams: propTeams = [] }: VersusProps) => {
   const [teamA, setTeamA] = useState("");
   const [teamB, setTeamB] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [teams, setTeams] = useState<Team[]>(propTeams); // Initialize with propTeams
+  const [loading, setLoading] = useState(!propTeams.length); // Only load if no propTeams
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  // Use propTeams if provided, otherwise fall back to the static teams array
-  const selectedTeams = propTeams.length > 0 ? propTeams : teams;
+  // Fetch teams from API with 3-second timeout and fallback to localTeams
+  useEffect(() => {
+    if (propTeams.length > 0) {
+      setTeams(propTeams); // Use propTeams if provided
+      setLoading(false);
+      return;
+    }
+
+    let timeoutId: number | undefined; // 'number' is the browser standard
+
+    const fetchTeams = async () => {
+      try {
+        setLoading(true);
+        const controller = new AbortController();
+        timeoutId = setTimeout(() => {
+          controller.abort(); // Abort fetch after 3 seconds
+        }, 3000);
+
+        const response = await fetch("https://matchups.meralus.dev/api/teams-full", {
+          signal: controller.signal,
+        });
+        clearTimeout(timeoutId); // Clear timeout if fetch completes in time
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch teams: ${response.status}`);
+        }
+        const data: Team[] = await response.json();
+        setTeams(data);
+        setError(null);
+        setSuccessMessage("API connection successful");
+        // Clear success message after 3 seconds
+        setTimeout(() => {
+          setSuccessMessage(null);
+        }, 3000);
+      } catch (err: any) {
+        console.error(err);
+        if (err.name === "AbortError") {
+          setTeams(localTeams); // Fallback to local teams on timeout
+          setError("API took too long to respond, using local data.");
+        } else {
+          setTeams(localTeams); // Fallback to local teams on any error
+          setError("Failed to load teams from API, using local data.");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTeams();
+
+    return () => clearTimeout(timeoutId); // Cleanup timeout on unmount
+  }, [propTeams]);
 
   const handleSubmit = () => {
     if (teamA && teamB) {
@@ -68,50 +122,70 @@ export const Versus = ({ teams: propTeams }: VersusProps) => {
     setTeamB("");
   };
 
+  // Use propTeams if provided, otherwise use fetched or fallback teams
+  const selectedTeams = propTeams.length > 0 ? propTeams : teams;
+
   return (
     <div className="flex flex-col w-full bg-black text-white">
-      <div className="flex flex-col items-center py-12 space-y-8">
-        <div className="flex flex-row justify-evenly items-center w-full max-w-4xl">
-          <TeamSelect
-            label="Team A"
-            value={teamA}
-            onChange={setTeamA}
-            options={selectedTeams}
-          />
-          <h2 className="text-lg font-bold">VS</h2>
-          <TeamSelect
-            label="Team B"
-            value={teamB}
-            onChange={setTeamB}
-            options={selectedTeams}
-          />
+      {loading && (
+        <div className="flex justify-center py-12">
+          <p>Loading teams...</p>
         </div>
+      )}
+      {successMessage && (
+        <div className="flex justify-center py-12 text-green-500">
+          <p>{successMessage}</p>
+        </div>
+      )}
+      {error && (
+        <div className="flex justify-center py-12 text-red-500">
+          <p>{error}</p>
+        </div>
+      )}
+      {!loading && (
+        <div className="flex flex-col items-center py-12 space-y-8">
+          <div className="flex flex-row justify-evenly items-center w-full max-w-4xl">
+            <TeamSelect
+              label="Team A"
+              value={teamA}
+              onChange={setTeamA}
+              options={selectedTeams}
+            />
+            <h2 className="text-lg font-bold">VS</h2>
+            <TeamSelect
+              label="Team B"
+              value={teamB}
+              onChange={setTeamB}
+              options={selectedTeams}
+            />
+          </div>
 
-        <div className="flex flex-col items-center space-y-2">
-          <button
-            onClick={handleSubmit}
-            disabled={!teamA || !teamB}
-            className={`px-6 py-2 rounded-lg font-semibold transition ${
-              teamA && teamB
-                ? "bg-orange text-white hover:bg-orange-light"
-                : "bg-gray-medium hover:bg-gray-dim text-gray-light cursor-not-allowed"
-            }`}
-          >
-            Submit
-          </button>
-          <button
-            onClick={handleReset}
-            className={`text-sm text-gray-light hover:text-white underline transition-opacity duration-300 ${
-              submitted ? "opacity-100 visible" : "opacity-0 invisible"
-            }`}
-          >
-            Reset
-          </button>
+          <div className="flex flex-col items-center space-y-2">
+            <button
+              onClick={handleSubmit}
+              disabled={!teamA || !teamB || loading}
+              className={`px-6 py-2 rounded-lg font-semibold transition ${
+                teamA && teamB && !loading
+                  ? "bg-orange text-white hover:bg-orange-light"
+                  : "bg-gray-medium hover:bg-gray-dim text-gray-light cursor-not-allowed"
+              }`}
+            >
+              Submit
+            </button>
+            <button
+              onClick={handleReset}
+              className={`text-sm text-gray-light hover:text-white underline transition-opacity duration-300 ${
+                submitted ? "opacity-100 visible" : "opacity-0 invisible"
+              }`}
+            >
+              Reset
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="w-full px-4 pb-12">
-        <RevealBlock show={submitted}>
+        <RevealBlock show={submitted && !loading}>
           <TeamMatchup
             team1Image={
               selectedTeams.find((team) => team.id === teamA)?.image ||
