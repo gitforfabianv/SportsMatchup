@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=VT323&display=swap");
 @import "tailwindcss";
 
 @layer utilities {
@@ -47,4 +48,10 @@
   --color-gray-medium: #3a3a3a;
   --color-gray-light: #b0b0b0;
   --color-gray-dim: #606060;
+}
+
+#versus {
+  font-family: "VT323", monospace;
+  font-weight: 400;
+  font-style: normal;
 }

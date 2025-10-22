@@ -25,7 +25,7 @@ export const Navbar = ({ showApi, setShowApi }: NavbarProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <div className="w-full sticky top-0 z-50 bg-black shadow-lg shadow-orange-light/50 backdrop-blur-md">
+    <div className="w-full sticky top-0 z-50 bg-black border border-b-white backdrop-blur-md">
       <div className="h-[65px] flex items-center justify-between px-4">
         {/* Logo */}
         <a href="#about-me" className="flex items-center">

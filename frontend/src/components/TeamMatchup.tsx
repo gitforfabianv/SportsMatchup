@@ -1,7 +1,10 @@
 "use client";
 import { StatBar } from "./StatBar";
+import MatchupsLogo from "../assets/MatchupsLogo.svg";
 
 interface TeamMatchupProps {
+  team1: string;
+  team2: string;
   team1Image: string;
   team2Image: string;
   record: string;
@@ -15,6 +18,8 @@ interface TeamMatchupProps {
 }
 
 export function TeamMatchup({
+  team1,
+  team2,
   team1Image,
   team2Image,
   record,
@@ -29,58 +34,78 @@ export function TeamMatchup({
   return (
     <div className="flex flex-col justify-center items-center space-y-6 bg-black text-white">
       {/* Record */}
-      <h2 className="text-xl font-bold">{record}</h2>
+      {/**<h2 className="text-xl font-bold">{record}</h2>**/}
+      <img
+        src={MatchupsLogo}
+        alt="Logo"
+        width={70}
+        height={70}
+        draggable={false}
+        className="cursor-pointer m-2"
+      />
 
       {/* Team Images */}
-      <div className="flex justify-around items-center w-full">
-        <img
-          src={team1Image}
-          alt="Team 1"
-          className="h-20 w-20 object-contain"
-        />
-        <span className="text-lg font-semibold">vs</span>
-        <img
-          src={team2Image}
-          alt="Team 2"
-          className="h-20 w-20 object-contain"
-        />
+      <div className="flex justify-center items-center w-full">
+        <div className="w-1/3 flex flex-col justify-center items-center">
+          <span className="text-3xl text-center my-2">{team1}</span>
+          <img
+            src={team1Image}
+            alt="Team 1"
+            className="h-20 w-20 object-contain"
+          />
+        </div>
+
+        <div className="w-auto flex flex-col justify-center">
+          <span className="text-4xl font-semibold">vs</span>
+        </div>
+
+        <div className="w-1/3 flex flex-col justify-center items-center">
+          <span className="text-3xl text-center my-2">{team2}</span>
+          <img
+            src={team2Image}
+            alt="Team 2"
+            className="h-20 w-20 object-contain"
+          />
+        </div>
       </div>
 
       {/* Head-to-Head Stats */}
-      <div className="w-full grid grid-cols-3 gap-4 text-center">
-        <div className="space-y-2">
-          {headToHeadTeam1Stats.map((stat, i) => {
-            const value = parseFloat(stat);
-            const opponentValue = parseFloat(headToHeadTeam2Stats[i]);
-            const max = Math.max(value, opponentValue);
+      <div id="headtohead" className="w-full space-y-4">
+        {statLabels.map((label, i) => {
+          const team1Value = parseFloat(headToHeadTeam1Stats[i]);
+          const team2Value = parseFloat(headToHeadTeam2Stats[i]);
+          const max = Math.max(team1Value, team2Value);
 
-            return (
-              <div key={i} className="space-y-1">
-                <div>{stat}</div>
-                <StatBar value={value} max={max} color="bg-red-500" />
+          return (
+            <div key={i} className="w-full space-y-1">
+              {/* Stat Values Row */}
+              <div className="flex justify-between items-center text-xl text-center">
+                <div className="text-right text-amber-300 w-1/3">
+                  {team1Value}
+                </div>
+                <div className="w-1/3 font-semibold text-2xl">{label}</div>
+                <div className="text-left text-amber-300 w-1/3">
+                  {team2Value}
+                </div>
               </div>
-            );
-          })}
-        </div>
-        <div className="space-y-2 font-semibold">
-          {statLabels.map((label, i) => (
-            <div key={i}>{label}</div>
-          ))}
-        </div>
-        <div className="space-y-2">
-          {headToHeadTeam2Stats.map((stat, i) => {
-            const value = parseFloat(stat);
-            const opponentValue = parseFloat(headToHeadTeam1Stats[i]);
-            const max = Math.max(value, opponentValue);
 
-            return (
-              <div key={i} className="space-y-1">
-                <div>{stat}</div>
-                <StatBar value={value} max={max} color="bg-green-500" reverse />
+              {/* StatBar Row */}
+              <div className="flex justify-center items-center gap-8">
+                <div className="w-1/3">
+                  <StatBar value={team1Value} max={max} color="bg-green-400" />
+                </div>
+                <div className="w-1/3">
+                  <StatBar
+                    value={team2Value}
+                    max={max}
+                    color="bg-red-400"
+                    reverse
+                  />
+                </div>
               </div>
-            );
-          })}
-        </div>
+            </div>
+          );
+        })}
       </div>
 
       {/* Historical Stats */}
