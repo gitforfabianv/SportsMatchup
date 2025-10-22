@@ -22,7 +22,6 @@ export function TeamMatchup({
   team2,
   team1Image,
   team2Image,
-  record,
   statLabels,
   headToHeadTeam1Stats,
   headToHeadTeam2Stats,

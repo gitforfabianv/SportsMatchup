@@ -1,16 +1,17 @@
 import { useState, useRef, useEffect } from "react";
 
-interface Option {
-  short_name: string;
+interface Team {
+  id?: string;
   name: string;
   image: string;
+  short_name?: string;
 }
 
 interface CustomSelectProps {
   label: string;
   value: string;
   onChange: (val: string) => void;
-  options: Option[];
+  options: Team[];
 }
 
 export const CustomSelect = ({
@@ -72,8 +73,10 @@ export const CustomSelect = ({
             <div
               key={opt.short_name}
               onClick={() => {
-                onChange(opt.short_name);
-                setOpen(false);
+                if (opt.short_name) {
+                  onChange(opt.short_name);
+                  setOpen(false);
+                }
               }}
               className={`flex justify-start items-center space-x-2 py-2 pl-2 cursor-pointer hover:bg-gray-700 ${
                 value === opt.short_name ? "bg-gray-800" : ""
