@@ -24,8 +24,6 @@ export function TeamMatchup({
   team2Image,
   headToHeadTeam1Stats,
   headToHeadTeam2Stats,
-  historicalTeam1Stats,
-  historicalTeam2Stats,
   team1Accolades,
   team2Accolades,
 }: TeamMatchupProps) {
