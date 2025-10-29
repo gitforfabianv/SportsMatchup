@@ -11,7 +11,14 @@ interface Team {
 }
 
 interface VersusProps {
-  teams?: Team[]; // Make propTeams optional
+  teams?: Team[];
+}
+
+interface HeadToHeadData {
+  [key: string]: {
+    [team: string]: Record<string, number | string>;
+    games_count?: number;
+  };
 }
 
 // Define the local fallback teams array
@@ -196,28 +203,27 @@ export const Versus = ({ teams: propTeams = [] }: VersusProps) => {
   const [teamA, setTeamA] = useState("");
   const [teamB, setTeamB] = useState("");
   const [submitted, setSubmitted] = useState(false);
-  const [teams, setTeams] = useState<Team[]>(propTeams); // Initialize with propTeams
-  const [loading, setLoading] = useState(!propTeams.length); // Only load if no propTeams
+  const [teams, setTeams] = useState<Team[]>(propTeams);
+  const [loading, setLoading] = useState(!propTeams.length);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [headToHeadData, setHeadToHeadData] = useState<HeadToHeadData>({});
+  const [matchupStats, setMatchupStats] = useState<any>(null);
 
-  // Fetch teams from API with 3-second timeout and fallback to localTeams
+  // Load teams (API or local)
   useEffect(() => {
     if (propTeams.length > 0) {
-      setTeams(propTeams); // Use propTeams if provided
+      setTeams(propTeams);
       setLoading(false);
       return;
     }
 
-    let timeoutId: number | undefined; // 'number' is the browser standard
-
+    let timeoutId: number | undefined;
     const fetchTeams = async () => {
       try {
         setLoading(true);
         const controller = new AbortController();
-        timeoutId = setTimeout(() => {
-          controller.abort(); // Abort fetch after 3 seconds
-        }, 3000);
+        timeoutId = setTimeout(() => controller.abort(), 3000);
 
         const response = await fetch(
           "https://matchups.meralus.dev/api/teams-full",
@@ -225,41 +231,59 @@ export const Versus = ({ teams: propTeams = [] }: VersusProps) => {
             signal: controller.signal,
           }
         );
-        clearTimeout(timeoutId); // Clear timeout if fetch completes in time
+        clearTimeout(timeoutId);
 
-        if (!response.ok) {
-          throw new Error(`Failed to fetch teams: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`Failed: ${response.status}`);
         const data: Team[] = await response.json();
         setTeams(data);
         setError(null);
         setSuccessMessage("API connection successful");
-        // Clear success message after 3 seconds
-        setTimeout(() => {
-          setSuccessMessage(null);
-        }, 3000);
+        setTimeout(() => setSuccessMessage(null), 3000);
       } catch (err: any) {
         console.error(err);
-        if (err.name === "AbortError") {
-          setTeams(localTeams); // Fallback to local teams on timeout
-          setError("API took too long to respond, using local data.");
-        } else {
-          setTeams(localTeams); // Fallback to local teams on any error
-          setError("Failed to load teams from API, using local data.");
-        }
+        setTeams(localTeams);
+        setError("Failed to load teams from API, using local data.");
       } finally {
         setLoading(false);
       }
     };
 
     fetchTeams();
-
-    return () => clearTimeout(timeoutId); // Cleanup timeout on unmount
+    return () => clearTimeout(timeoutId);
   }, [propTeams]);
+
+  // Load local head-to-head JSON
+  useEffect(() => {
+    const loadLocalData = async () => {
+      try {
+        const res = await fetch(
+          `${import.meta.env.BASE_URL}data/headtohead.json`
+        );
+        if (!res.ok) throw new Error("Failed to load local head-to-head data");
+        const json = await res.json();
+        setHeadToHeadData(json);
+      } catch (err) {
+        console.error("Error loading head-to-head data:", err);
+        setError("Failed to load head-to-head data");
+      }
+    };
+    loadLocalData();
+  }, []);
 
   const handleSubmit = () => {
     if (teamA && teamB) {
-      console.log("Submitted:", teamA, "vs", teamB);
+      const matchupKey = `${teamA}_vs_${teamB}`;
+      const reverseKey = `${teamB}_vs_${teamA}`;
+      const matchup = headToHeadData[matchupKey] || headToHeadData[reverseKey];
+
+      if (!matchup) {
+        setError("No data found for this matchup.");
+        setMatchupStats(null);
+        return;
+      }
+
+      setError(null);
+      setMatchupStats(matchup);
       setSubmitted(true);
     }
   };
@@ -268,13 +292,14 @@ export const Versus = ({ teams: propTeams = [] }: VersusProps) => {
     setSubmitted(false);
     setTeamA("");
     setTeamB("");
+    setMatchupStats(null);
   };
 
-  // Use propTeams if provided, otherwise use fetched or fallback teams
   const selectedTeams = propTeams.length > 0 ? propTeams : teams;
 
   return (
     <div id="versus" className="flex flex-col w-full bg-black text-white">
+      {/* Messages */}
       {loading && (
         <div className="flex justify-center py-12">
           <p>Loading teams...</p>
@@ -290,6 +315,8 @@ export const Versus = ({ teams: propTeams = [] }: VersusProps) => {
           <p>{error}</p>
         </div>
       )}
+
+      {/* Selectors */}
       {!loading && (
         <div className="flex flex-col items-center py-12 space-y-8">
           <div className="flex flex-row justify-evenly items-center w-full max-w-4xl">
@@ -332,40 +359,48 @@ export const Versus = ({ teams: propTeams = [] }: VersusProps) => {
         </div>
       )}
 
+      {/* Matchup Display */}
       <div className="w-full px-4 pb-12">
-        <RevealBlock show={submitted && !loading}>
-          <TeamMatchup
-            team1={
-              selectedTeams.find((team) => team.short_name === teamA)?.name ||
-              "Team A"
-            }
-            team2={
-              selectedTeams.find((team) => team.short_name === teamB)?.name ||
-              "Team B"
-            }
-            team1Image={
-              selectedTeams.find((team) => team.short_name === teamA)?.image ||
-              "/images/default.png"
-            }
-            team2Image={
-              selectedTeams.find((team) => team.short_name === teamB)?.image ||
-              "/images/default.png"
-            }
-            record={`${
-              selectedTeams.find((team) => team.short_name === teamA)?.name ||
-              "Team A"
-            } vs ${
-              selectedTeams.find((team) => team.short_name === teamB)?.name ||
-              "Team B"
-            }`}
-            statLabels={["PPG", "RPG", "APG", "3P%"]}
-            headToHeadTeam1Stats={["101.4", "45.2", "24.1", "36.1%"]}
-            headToHeadTeam2Stats={["98.7", "43.5", "22.8", "38.6%"]}
-            historicalTeam1Stats={["99.8", "44.9", "23.5", "35.4%"]}
-            historicalTeam2Stats={["100.2", "46.1", "25.0", "37.0%"]}
-            team1Accolades={["🏆 3× Champs", "⭐ 5× All-Stars"]}
-            team2Accolades={["🏆 1× Champion", "⭐ 4× All-Stars"]}
-          />
+        <RevealBlock show={submitted && matchupStats && !loading}>
+          {matchupStats && matchupStats[teamA] && matchupStats[teamB] ? (
+            <>
+              <TeamMatchup
+                team1={
+                  selectedTeams.find((t) => t.short_name === teamA)?.name ||
+                  "Team A"
+                }
+                team2={
+                  selectedTeams.find((t) => t.short_name === teamB)?.name ||
+                  "Team B"
+                }
+                team1Image={
+                  selectedTeams.find((t) => t.short_name === teamA)?.image ||
+                  "/images/default.png"
+                }
+                team2Image={
+                  selectedTeams.find((t) => t.short_name === teamB)?.image ||
+                  "/images/default.png"
+                }
+                record={`${teamA} vs ${teamB}`}
+                headToHeadTeam1Stats={matchupStats[teamA]}
+                headToHeadTeam2Stats={matchupStats[teamB]}
+                statLabels={[]} // unused now
+                historicalTeam1Stats={[]}
+                historicalTeam2Stats={[]}
+                team1Accolades={[]}
+                team2Accolades={[]}
+              />
+              <p className="text-center mt-4 text-gray-400">
+                {typeof matchupStats.games_count === "number"
+                  ? `Based on ${matchupStats.games_count} games`
+                  : "Based on available data"}
+              </p>
+            </>
+          ) : (
+            <p className="text-center text-gray-400">
+              No head-to-head data found for this matchup.
+            </p>
+          )}
         </RevealBlock>
       </div>
     </div>
