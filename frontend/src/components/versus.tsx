@@ -16,8 +16,8 @@ interface VersusProps {
 
 interface HeadToHeadData {
   [key: string]: {
-    [team: string]: Record<string, number | string>;
     games_count?: number;
+    [team: string]: Record<string, number | string> | number | undefined;
   };
 }
 
