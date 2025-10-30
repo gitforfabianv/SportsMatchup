@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 
 interface Team {
-  id?: string;
+  id?: string | number;
   name: string;
   image: string;
   short_name?: string;

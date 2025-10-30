@@ -14,11 +14,19 @@ interface VersusProps {
   teams?: Team[];
 }
 
-interface HeadToHeadData {
-  [key: string]: {
-    [team: string]: Record<string, number | string>;
-    games_count?: number;
+interface HeadToHeadRecord {
+  [stat: string]: string | number;
+}
+
+interface Matchup {
+  teams: {
+    [team: string]: HeadToHeadRecord;
   };
+  games_count?: number;
+}
+
+interface HeadToHeadData {
+  [matchupKey: string]: Matchup;
 }
 
 export const Versus = ({ teams: propTeams = [] }: VersusProps) => {
@@ -226,7 +234,7 @@ export const Versus = ({ teams: propTeams = [] }: VersusProps) => {
                 team2Accolades={[]}
               />
               <p className="text-center mt-4 text-gray-400">
-                {typeof matchupStats.games_count === "number"
+                {typeof matchupStats?.games_count === "number"
                   ? `Based on ${matchupStats.games_count} games`
                   : "Based on available data"}
               </p>
