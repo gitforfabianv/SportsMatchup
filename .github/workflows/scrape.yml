@@ -37,10 +37,10 @@ jobs:
         
     # --- Run Scraper and Processor ---
     # The new scraper to get all-time records
-    - name: 🏃 Run Land of Basketball Scraper
+    - name: Run Land of Basketball Scraper
       run: python Scraper/land_of_basketball_scraper.py
       # Set up your environment variables if needed
-      env:
+      #env:
         # Example: GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     # Your original processor (runs after the new scraper dumps its data)
