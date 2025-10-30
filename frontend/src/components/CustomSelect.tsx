@@ -69,9 +69,9 @@ export const CustomSelect = ({
 
       {open && (
         <div className="absolute top-full left-0 w-full bg-black border border-white mt-1 z-10 max-h-64 overflow-y-auto">
-          {options.map((opt) => (
+          {options.map((opt, index) => (
             <div
-              key={opt.short_name}
+              key={opt.id ?? opt.short_name ?? index} // unique key
               onClick={() => {
                 if (opt.short_name) {
                   onChange(opt.short_name);

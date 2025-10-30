@@ -1,0 +1,182 @@
+[
+  {
+    "id": 1,
+    "name": "Atlanta Hawks",
+    "shortName": "ATL",
+    "logo": "NBA-Team-Logos/Atlanta Hawks.svg"
+  },
+  {
+    "id": 2,
+    "name": "Boston Celtics",
+    "shortName": "BOS",
+    "logo": "NBA-Team-Logos/Boston Celtics.svg"
+  },
+  {
+    "id": 3,
+    "name": "Brooklyn Nets",
+    "shortName": "BKN",
+    "logo": "NBA-Team-Logos/Brooklyn Nets.svg"
+  },
+  {
+    "id": 4,
+    "name": "Charlotte Hornets",
+    "shortName": "CHA",
+    "logo": "NBA-Team-Logos/Charlotte Hornets.svg"
+  },
+  {
+    "id": 5,
+    "name": "Chicago Bulls",
+    "shortName": "CHI",
+    "logo": "NBA-Team-Logos/Chicago Bulls.svg"
+  },
+  {
+    "id": 6,
+    "name": "Cleveland Cavaliers",
+    "shortName": "CLE",
+    "logo": "NBA-Team-Logos/Cleveland Cavaliers.svg"
+  },
+  {
+    "id": 7,
+    "name": "Dallas Mavericks",
+    "shortName": "DAL",
+    "logo": "NBA-Team-Logos/Dallas Mavericks.svg"
+  },
+  {
+    "id": 8,
+    "name": "Denver Nuggets",
+    "shortName": "DEN",
+    "logo": "NBA-Team-Logos/Denver Nuggets.svg"
+  },
+  {
+    "id": 9,
+    "name": "Detroit Pistons",
+    "shortName": "DET",
+    "logo": "NBA-Team-Logos/Detroit Pistons.svg"
+  },
+  {
+    "id": 10,
+    "name": "Golden State Warriors",
+    "shortName": "GSW",
+    "logo": "NBA-Team-Logos/Golden State Warriors.svg"
+  },
+  {
+    "id": 11,
+    "name": "Houston Rockets",
+    "shortName": "HOU",
+    "logo": "NBA-Team-Logos/Houston Rockets.svg"
+  },
+  {
+    "id": 12,
+    "name": "Indiana Pacers",
+    "shortName": "IND",
+    "logo": "NBA-Team-Logos/Indiana Pacers.svg"
+  },
+  {
+    "id": 13,
+    "name": "Los Angeles Clippers",
+    "shortName": "LAC",
+    "logo": "NBA-Team-Logos/Los Angeles Clippers.svg"
+  },
+  {
+    "id": 14,
+    "name": "Los Angeles Lakers",
+    "shortName": "LAL",
+    "logo": "NBA-Team-Logos/Los Angeles Lakers.svg"
+  },
+  {
+    "id": 15,
+    "name": "Memphis Grizzlies",
+    "shortName": "MEM",
+    "logo": "NBA-Team-Logos/Memphis Grizzlies.svg"
+  },
+  {
+    "id": 16,
+    "name": "Miami Heat",
+    "shortName": "MIA",
+    "logo": "NBA-Team-Logos/Miami Heat.svg"
+  },
+  {
+    "id": 17,
+    "name": "Milwaukee Bucks",
+    "shortName": "MIL",
+    "logo": "NBA-Team-Logos/Milwaukee Bucks.svg"
+  },
+  {
+    "id": 18,
+    "name": "Minnesota Timberwolves",
+    "shortName": "MIN",
+    "logo": "NBA-Team-Logos/Minnesota Timberwolves.svg"
+  },
+  {
+    "id": 19,
+    "name": "New Orleans Pelicans",
+    "shortName": "NOP",
+    "logo": "NBA-Team-Logos/New Orleans Pelicans.svg"
+  },
+  {
+    "id": 20,
+    "name": "New York Knicks",
+    "shortName": "NYK",
+    "logo": "NBA-Team-Logos/New York Knicks.svg"
+  },
+  {
+    "id": 21,
+    "name": "Oklahoma City Thunder",
+    "shortName": "OKC",
+    "logo": "NBA-Team-Logos/Oklahoma City Thunder.svg"
+  },
+  {
+    "id": 22,
+    "name": "Orlando Magic",
+    "shortName": "ORL",
+    "logo": "NBA-Team-Logos/Orlando Magic.svg"
+  },
+  {
+    "id": 23,
+    "name": "Philadelphia 76ers",
+    "shortName": "PHI",
+    "logo": "NBA-Team-Logos/Philadelphia 76ers.svg"
+  },
+  {
+    "id": 24,
+    "name": "Phoenix Suns",
+    "shortName": "PHX",
+    "logo": "NBA-Team-Logos/Phoenix Suns.svg"
+  },
+  {
+    "id": 25,
+    "name": "Portland Trail Blazers",
+    "shortName": "POR",
+    "logo": "NBA-Team-Logos/Portland Trail Blazers.svg"
+  },
+  {
+    "id": 26,
+    "name": "Sacramento Kings",
+    "shortName": "SAC",
+    "logo": "NBA-Team-Logos/Sacramento Kings.svg"
+  },
+  {
+    "id": 27,
+    "name": "San Antonio Spurs",
+    "shortName": "SAS",
+    "logo": "NBA-Team-Logos/San Antonio Spurs.svg"
+  },
+  {
+    "id": 28,
+    "name": "Toronto Raptors",
+    "shortName": "TOR",
+    "logo": "NBA-Team-Logos/Toronto Raptors.svg"
+  },
+  {
+    "id": 29,
+    "name": "Utah Jazz",
+    "shortName": "UTA",
+    "logo": "NBA-Team-Logos/Utah Jazz.svg"
+  },
+  {
+    "id": 30,
+    "name": "Washington Wizards",
+    "shortName": "WAS",
+    "logo": "NBA-Team-Logos/Washington Wizards.svg"
+  }
+]
