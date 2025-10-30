@@ -1,0 +1,61 @@
+name: NBA Matchup Data Scraper
+
+on:
+  # Triggers the workflow daily at 00:00 UTC
+  schedule:
+    - cron: '0 0 * * *'
+  # Allows manual running from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  scrape_and_commit:
+    runs-on: ubuntu-latest
+    
+    # Permissions are needed to check out the code and push new commits
+    permissions:
+      contents: write 
+      
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        # Checkout the staging branch for commit
+        ref: staging_data 
+
+    # --- Setup Python Environment ---
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11' # Use a recent, stable version
+
+    - name: Install Dependencies
+      run: |
+        # Install necessary OS packages for headless Chrome
+        sudo apt-get update && sudo apt-get install -y chromium-browser
+        pip install --upgrade pip
+        pip install -r Scraper/requirements.txt
+        
+    # --- Run Scraper and Processor ---
+    # The new scraper to get all-time records
+    - name: Run Land of Basketball Scraper
+      run: python Scraper/land_of_basketball_scraper.py
+      # Set up your environment variables if needed
+      #env:
+        # Example: GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    # Your original processor (runs after the new scraper dumps its data)
+    - name: Run Matchup Averages Processor
+      run: python Scraper/matchup_averages.py
+      # This assumes the new scraper creates 'team_totals_all_teams.json'
+      
+    # --- Git Operations: Commit and Push ---
+    - name: Git Add, Commit, and Push Changes
+      # Use a dedicated action for file commit and push
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: "Feat: Update NBA matchup data from LandOfBasketball"
+        branch: staging_data # Push to this branch
+        # Commit all new/modified JSON and any other tracked output files
+        file_pattern: |
+          *.json
+          **/*.json
